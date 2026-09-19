@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html class="h-full" lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    name="viewport">
+  <link rel="icon" type="image/png" href="./icono.png">
+  <link rel="apple-touch-icon" href="./icono.png">
+  <link rel="manifest" href="./manifest.json">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    @layer base {
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+      }
+
+      body {
+        overscroll-behavior: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      .pt-safe {
+        padding-top: env(safe-area-inset-top, 0px);
+      }
+
+      main> :first-child {
+        margin-top: 0 !important;
+      }
+
+      main> :last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script
+    id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "inverse-primary": "#c7c6c2", "on-primary-container": "#858581", "on-surface": "#1a1c1b", "outline": "#767871", "surface-container-high": "#e8e8e6", "primary-fixed-dim": "#c7c6c2", "on-background": "#1a1c1b", "on-tertiary-container": "#998068", "secondary-fixed-dim": "#b7ccb9", "on-secondary-fixed-variant": "#394b3d", "error-container": "#ffdad6", "primary": "#020201", "on-tertiary-fixed": "#281807", "on-tertiary": "#ffffff", "inverse-surface": "#2f3130", "surface-container-low": "#f4f4f2", "on-tertiary-fixed-variant": "#57432e", "secondary-fixed": "#d3e8d5", "primary-fixed": "#e4e2dd", "on-primary-fixed-variant": "#464743", "on-secondary-container": "#546758", "tertiary-fixed": "#fcddc1", "surface-variant": "#e2e3e1", "tertiary-container": "#291908", "on-error-container": "#93000a", "background": "#f9f9f7", "primary-container": "#1c1d1a", "on-primary-fixed": "#1b1c19", "surface-dim": "#dadad8", "on-primary": "#ffffff", "on-surface-variant": "#464742", "surface-container-highest": "#e2e3e1", "surface": "#f9f9f7", "secondary-container": "#d0e5d2", "tertiary": "#040100", "surface-container": "#eeeeec", "on-error": "#ffffff", "on-secondary-fixed": "#0e1f13", "tertiary-fixed-dim": "#dfc1a6", "on-secondary": "#ffffff", "inverse-on-surface": "#f1f1ef", "surface-bright": "#f9f9f7", "surface-container-lowest": "#ffffff", "outline-variant": "#c6c7c0", "surface-tint": "#5e5f5b", "error": "#ba1a1a", "secondary": "#506354" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "margin-tablet": "2rem", "margin": "1.5rem", "space-sm": "0.5rem", "space-lg": "1.5rem", "gutter": "1rem", "space-md": "1rem", "gutter-sm": "0.5rem", "space-xs": "0.25rem", "space-xl": "2.5rem" }, fontFamily: { "body-sm": ["Inter"], "display-hero-mobile": ["Plus Jakarta Sans"], "display-hero": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "body-md": ["Inter"], "label-caps": ["Inter"], "numeral-metric": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"] }, fontSize: { "body-sm": ["12px", { lineHeight: "18px", letterSpacing: "0.01em", fontWeight: "400" }], "display-hero-mobile": ["38px", { lineHeight: "42px", letterSpacing: "-0.025em", fontWeight: "400" }], "display-hero": ["48px", { lineHeight: "52px", letterSpacing: "-0.03em", fontWeight: "400" }], "body-lg": ["16px", { lineHeight: "26px", letterSpacing: "-0.005em", fontWeight: "400" }], "body-md": ["14px", { lineHeight: "22px", letterSpacing: "0em", fontWeight: "400" }], "label-caps": ["11px", { lineHeight: "14px", letterSpacing: "0.06em", fontWeight: "600" }], "numeral-metric": ["28px", { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "400" }], "headline-lg-mobile": ["26px", { lineHeight: "32px", letterSpacing: "-0.015em", fontWeight: "500" }], "headline-sm": ["18px", { lineHeight: "24px", letterSpacing: "-0.005em", fontWeight: "600" }], "headline-md": ["22px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "500" }], "headline-lg": ["32px", { lineHeight: "38px", letterSpacing: "-0.02em", fontWeight: "500" }] } } } };</script>
+</head>
+
+<body
+  class="bg-surface-container-low text-on-surface h-full flex justify-center font-body-md text-body-md antialiased selection:bg-surface-variant">
+  <div
+    class="relative w-full max-w-md h-full flex flex-col bg-surface text-on-surface overflow-hidden sm:my-auto sm:h-[94vh] sm:rounded-[2.5rem] sm:border sm:border-outline-variant/60 sm:shadow-2xl">
+  <main class="flex-1 flex flex-col relative w-full pt-8 pb-24 bg-surface px-margin overflow-y-auto">
+    <div class="flex flex-col w-full pb-8" data-view="hoy">
+      <!-- Subtle ambient glow in background -->
+      <div class="relative w-full flex flex-col gap-space-lg">
+        <!-- Greeting & Date Header -->
+        <header class="flex flex-col pt-2">
+          <h1 id="greeting" class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Buenas tardes</h1>
+          <p class="font-body-md text-body-md text-on-surface-variant capitalize mt-0.5" id="current-date">
+          </p>
+        </header>
+        <!-- Week Days Selector -->
+        <div class="w-full bg-surface-container-low rounded-xl p-space-xs shadow-sm">
+          <div class="grid grid-cols-7 gap-1 text-center" id="day-selector"></div>
+        </div>
+        <!-- Main Calorie Gauge Focus Card -->
+        <div class="w-full bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col">
+              <span
+                class="font-label-caps text-label-caps text-on-surface-variant tracking-wider uppercase mb-1">Restantes</span>
+              <div class="flex items-baseline gap-1.5">
+                <span
+                  class="font-display-hero-mobile text-display-hero-mobile text-on-surface tracking-tight font-medium"
+                  id="remaining-count">2220</span>
+                <span class="font-body-md text-body-md text-on-surface-variant font-normal">kcal</span>
+              </div>
+            </div>
+            <div class="w-11 h-11 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-[22px]">local_fire_department</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1.5 pt-1">
+            <div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+              <div class="h-full bg-secondary rounded-full transition-all duration-1000 ease-out" id="progress-meter"
+                style="width: 4%"></div>
+            </div>
+            <div class="flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm pt-0.5">
+              <span class="" data-consumed-kcal>0 kcal consumidas</span>
+              <span class="" id="daily-goal-label">Meta: 2220 kcal</span>
+            </div>
+          </div>
+        </div>
+        <!-- Dual Stat Tiles -->
+        <div class="grid grid-cols-2 gap-space-md">
+          <!-- Left: Objetivo -->
+          <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col">
+            <span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider mb-1">
+              Objetivo
+            </span>
+            <div class="flex items-baseline gap-1">
+              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold" id="daily-goal">2220</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">kcal</span>
+            </div>
+          </div>
+          <!-- Right: Consumidas -->
+          <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col">
+            <span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider mb-1">
+              Consumidas
+            </span>
+            <div class="flex items-baseline gap-1">
+              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold" data-consumed-tile>0</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">kcal</span>
+            </div>
+          </div>
+        </div>
+        <!-- Minimalist Primary Action Button -->
+        <button
+          class="w-full h-12 bg-primary text-on-primary rounded-xl flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-all hover:bg-primary-container group"
+          id="add-entry-trigger" type="button">
+          <span class="material-symbols-outlined text-[20px] transition-transform group-hover:rotate-90">add</span>
+          <span class="font-body-md text-body-md font-medium tracking-wide">Añadir ingesta</span>
+        </button>
+        <!-- Bottom Section: Daily Entries Header & Serene Empty State -->
+        <section class="flex flex-col gap-space-sm mt-2">
+          <div class="flex items-center justify-between px-1">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface font-normal">Hoy</h2>
+            <span
+              class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full"
+              data-record-count>
+              0 registros
+            </span>
+          </div>
+          <div class="flex flex-col gap-space-sm" data-entries-list></div>
+          <!-- Serene Empty State Card -->
+          <div
+            class="w-full bg-surface-container-lowest/60 rounded-xl p-space-lg flex flex-col items-center justify-center text-center gap-space-sm shadow-sm py-8 transition-colors"
+            data-empty-state>
+            <div
+              class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant mb-1">
+              <span class="material-symbols-outlined text-[20px]">nature_people</span>
+            </div>
+            <div class="flex flex-col gap-0.5 max-w-[220px]">
+              <p class="font-body-md text-body-md text-on-surface font-medium">
+                Jornada en blanco
+              </p>
+              <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Tu diario está listo. Comienza el día registrando tu primera comida con calma.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div class="flex flex-col w-full pb-8 hidden" data-view="objetivo">
+      <!-- Editorial Header -->
+      <div class="pt-2 mb-space-lg">
+        <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Objetivo</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-1 max-w-sm">Calcula tu ingesta diaria recomendada
+          con un enfoque realista.</p>
+      </div>
+      <!-- Form Container -->
+      <form class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-lg"
+        id="goal-form" onsubmit="event.preventDefault();">
+        <!-- Group: Physical Metrics -->
+        <div class="flex flex-col gap-space-sm">
+          <div class="flex justify-between items-center mb-1">
+            <label class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider"
+              for="current-weight">Peso actual</label>
+            <span class="font-body-sm text-body-sm text-on-surface-variant/70">Corporal</span>
+          </div>
+          <div
+            class="relative flex items-center bg-surface-container-low rounded-xl px-4 py-3 focus-within:bg-surface-container transition-colors">
+            <input
+              class="w-full bg-transparent font-numeral-metric text-numeral-metric text-primary outline-none focus:outline-none"
+              id="current-weight" step="0.1" type="number" value="65" />
+            <span class="font-body-md text-body-md text-on-surface-variant ml-2 select-none">kg</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-space-md">
+          <div class="flex flex-col gap-space-sm">
+            <label class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider"
+              for="height">Altura</label>
+            <div
+              class="relative flex items-center bg-surface-container-low rounded-xl px-4 py-3 focus-within:bg-surface-container transition-colors">
+              <input
+                class="w-full bg-transparent font-numeral-metric text-numeral-metric text-primary outline-none focus:outline-none"
+                id="height" type="number" value="175" />
+              <span class="font-body-md text-body-md text-on-surface-variant ml-2 select-none">cm</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-space-sm">
+            <label class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider"
+              for="age">Edad</label>
+            <div
+              class="relative flex items-center bg-surface-container-low rounded-xl px-4 py-3 focus-within:bg-surface-container transition-colors">
+              <input
+                class="w-full bg-transparent font-numeral-metric text-numeral-metric text-primary outline-none focus:outline-none"
+                id="age" type="number" value="30" />
+              <span class="font-body-md text-body-md text-on-surface-variant ml-2 select-none">años</span>
+            </div>
+          </div>
+        </div>
+        <!-- Group: Sex Segmented Control -->
+        <div class="flex flex-col gap-space-sm">
+          <span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Sexo</span>
+          <div aria-label="Sexo biológico" class="grid grid-cols-2 gap-1 bg-surface-container-low p-1 rounded-xl"
+            role="radiogroup">
+            <button
+              class="sex-pill py-2.5 px-3 rounded-lg text-center font-body-md text-body-md transition-all duration-150 bg-primary text-on-primary shadow-sm"
+              data-value="hombre" type="button">
+              Hombre
+            </button>
+            <button
+              class="sex-pill py-2.5 px-3 rounded-lg text-center font-body-md text-body-md transition-all duration-150 text-on-surface-variant hover:text-primary"
+              data-value="mujer" type="button">
+              Mujer
+            </button>
+          </div>
+        </div>
+        <!-- Target Weight -->
+        <div class="flex flex-col gap-space-sm">
+          <div class="flex justify-between items-center mb-1">
+            <label class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider"
+              for="target-weight">Peso objetivo</label>
+          </div>
+          <div
+            class="relative flex items-center bg-surface-container-low rounded-xl px-4 py-3 focus-within:bg-surface-container transition-colors">
+            <input
+              class="w-full bg-transparent font-numeral-metric text-numeral-metric text-primary outline-none focus:outline-none"
+              id="target-weight" step="0.1" type="number" value="70" />
+            <span class="font-body-md text-body-md text-on-surface-variant ml-2 select-none">kg</span>
+          </div>
+        </div>
+        <!-- Group: Activity Level (2x2 Grid) -->
+        <div class="flex flex-col gap-space-sm">
+          <span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Nivel de
+            actividad</span>
+          <div aria-label="Nivel de actividad semanal" class="grid grid-cols-2 gap-space-sm" role="radiogroup">
+            <!-- 1. Sedentario -->
+            <button
+              class="activity-card text-left p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col justify-between h-24"
+              data-selected="false" data-value="sedentario" type="button">
+              <div class="flex items-center justify-between w-full">
+                <span class="font-headline-sm text-headline-sm text-primary">Sedentario</span>
+                <span
+                  class="material-symbols-outlined text-[18px] text-on-surface-variant/40 checkmark hidden">check_circle</span>
+              </div>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">0 días/semana</span>
+            </button>
+            <!-- 2. Ligero -->
+            <button
+              class="activity-card text-left p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col justify-between h-24"
+              data-selected="false" data-value="ligero" type="button">
+              <div class="flex items-center justify-between w-full">
+                <span class="font-headline-sm text-headline-sm text-primary">Ligero</span>
+                <span
+                  class="material-symbols-outlined text-[18px] text-on-surface-variant/40 checkmark hidden">check_circle</span>
+              </div>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">1–2 días/semana</span>
+            </button>
+            <!-- 3. Moderado (Selected) -->
+            <button
+              class="activity-card text-left p-3.5 rounded-xl bg-primary text-on-primary transition-all flex flex-col justify-between h-24 shadow-sm"
+              data-selected="true" data-value="moderado" type="button">
+              <div class="flex items-center justify-between w-full">
+                <span class="font-headline-sm text-headline-sm text-on-primary">Moderado</span>
+                <span class="material-symbols-outlined text-[18px] text-on-primary checkmark">check_circle</span>
+              </div>
+              <span class="font-body-sm text-body-sm text-on-primary/80">3–4 días/semana</span>
+            </button>
+            <!-- 4. Activo -->
+            <button
+              class="activity-card text-left p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col justify-between h-24"
+              data-selected="false" data-value="activo" type="button">
+              <div class="flex items-center justify-between w-full">
+                <span class="font-headline-sm text-headline-sm text-primary">Activo</span>
+                <span
+                  class="material-symbols-outlined text-[18px] text-on-surface-variant/40 checkmark hidden">check_circle</span>
+              </div>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">5–6 días/semana</span>
+            </button>
+            <!-- 5. Muy activo -->
+            <button
+              class="activity-card text-left p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col justify-between h-24"
+              data-selected="false" data-value="muy-activo" type="button">
+              <div class="flex items-center justify-between w-full">
+                <span class="font-headline-sm text-headline-sm text-primary">Muy activo</span>
+                <span
+                  class="material-symbols-outlined text-[18px] text-on-surface-variant/40 checkmark hidden">check_circle</span>
+              </div>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">7 días/semana</span>
+            </button>
+          </div>
+        </div>
+        <!-- Goal Timeline -->
+        <div class="flex flex-col gap-space-sm">
+          <div class="flex justify-between items-center mb-1">
+            <label class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider"
+              for="goal-duration">Plazo para la meta</label>
+            <span class="font-body-sm text-body-sm text-on-surface-variant/70">Tiempo estimado</span>
+          </div>
+          <div class="grid grid-cols-[1fr_1.4fr] gap-space-sm">
+            <div
+              class="relative flex items-center bg-surface-container-low rounded-xl px-4 py-3 focus-within:bg-surface-container transition-colors">
+              <input
+                class="w-full bg-transparent font-numeral-metric text-numeral-metric text-primary outline-none focus:outline-none"
+                id="goal-duration" min="1" step="1" type="number" value="4" />
+            </div>
+            <div aria-label="Unidad del plazo" class="grid grid-cols-2 gap-1 bg-surface-container-low p-1 rounded-xl"
+              role="radiogroup">
+              <button aria-checked="true"
+                class="duration-pill py-2.5 px-2 rounded-lg text-center font-body-md text-body-md transition-all duration-150 bg-primary text-on-primary shadow-sm"
+                data-value="semanas" role="radio" type="button">Semanas</button>
+              <button aria-checked="false"
+                class="duration-pill py-2.5 px-2 rounded-lg text-center font-body-md text-body-md transition-all duration-150 text-on-surface-variant hover:text-primary"
+                data-value="meses" role="radio" type="button">Meses</button>
+            </div>
+          </div>
+        </div>
+        <!-- Quiet Confirm Action -->
+        <div class="pt-2">
+          <button
+            class="w-full bg-primary text-on-primary h-12 rounded-xl font-headline-sm text-headline-sm flex items-center justify-center gap-2 active:scale-[0.99] transition-transform shadow-sm hover:opacity-95"
+            type="submit">
+            <span>Actualizar objetivo</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="flex flex-col w-full hidden" data-view="historial">
+      <div class="flex items-start justify-between gap-4 mb-space-xl pt-2">
+        <div class="flex flex-col gap-space-xs">
+          <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Historial</h1>
+          <p class="font-body-md text-body-md text-on-surface-variant">Tus días con objetivo y progreso.</p>
+        </div>
+        <button
+          class="w-11 h-11 shrink-0 rounded-full border border-error/25 text-error flex items-center justify-center hover:bg-error-container/40 transition-colors"
+          id="clear-all-data" aria-label="Borrar todos los datos" type="button">
+          <span class="material-symbols-outlined text-[20px]">delete</span>
+        </button>
+      </div>
+      <div class="flex flex-col gap-space-md" data-history-list></div>
+      <div
+        class="w-full bg-surface-container-lowest rounded-xl p-margin flex flex-col items-center justify-center text-center shadow-sm py-space-xl relative overflow-hidden transition-all duration-300"
+        data-empty-state>
+        <div
+          class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-space-lg text-secondary">
+          <span class="material-symbols-outlined text-[28px] opacity-80">calendar_today</span>
+        </div>
+        <div class="flex flex-col gap-space-xs max-w-[260px]">
+          <h2 class="font-headline-sm text-headline-sm text-on-surface">Todavía no hay registros</h2>
+          <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            Añade tus primeras ingestas desde la pantalla de inicio.
+          </p>
+        </div>
+        <div class="mt-space-xl">
+          <a class="inline-flex items-center justify-center h-12 px-space-lg bg-primary text-on-primary rounded-xl font-body-md text-body-md hover:bg-primary-container transition-transform active:scale-[0.98] duration-150"
+            data-path="hoy" href="#hoy">
+            <span class="material-symbols-outlined text-[20px] mr-2">add</span>
+            <span>Ir a Hoy</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Segmented control interaction for Sex
+      document.querySelectorAll('.sex-pill').forEach(button => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('.sex-pill').forEach(btn => {
+            btn.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+            btn.classList.remove('hover:text-primary');
+            btn.classList.add('text-on-surface-variant', 'hover:text-primary');
+          });
+          button.classList.remove('text-on-surface-variant', 'hover:text-primary');
+          button.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+        });
+      });
+
+      // Selector de unidad para el plazo de la meta
+      document.querySelectorAll('.duration-pill').forEach(button => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('.duration-pill').forEach(btn => {
+            btn.setAttribute('aria-checked', 'false');
+            btn.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+            btn.classList.remove('hover:text-primary');
+            btn.classList.add('text-on-surface-variant', 'hover:text-primary');
+          });
+          button.setAttribute('aria-checked', 'true');
+          button.classList.remove('text-on-surface-variant', 'hover:text-primary');
+          button.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+        });
+      });
+
+      // Selectable cards interaction for Activity Level
+      document.querySelectorAll('.activity-card').forEach(card => {
+        card.addEventListener('click', () => {
+          document.querySelectorAll('.activity-card').forEach(c => {
+            c.setAttribute('data-selected', 'false');
+            c.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+            c.classList.add('bg-surface-container-low', 'hover:bg-surface-container');
+
+            const title = c.querySelector('.font-headline-sm');
+            if (title) {
+              title.classList.remove('text-on-primary');
+              title.classList.add('text-primary');
+            }
+
+            const desc = c.querySelector('.font-body-sm');
+            if (desc) {
+              desc.classList.remove('text-on-primary/80');
+              desc.classList.add('text-on-surface-variant');
+            }
+
+            const icon = c.querySelector('.checkmark');
+            if (icon) {
+              icon.classList.add('hidden');
+              icon.classList.remove('text-on-primary');
+              icon.classList.add('text-on-surface-variant/40');
+            }
+          });
+
+          card.setAttribute('data-selected', 'true');
+          card.classList.remove('bg-surface-container-low', 'hover:bg-surface-container');
+          card.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+
+          const title = card.querySelector('.font-headline-sm');
+          if (title) {
+            title.classList.remove('text-primary');
+            title.classList.add('text-on-primary');
+          }
+
+          const desc = card.querySelector('.font-body-sm');
+          if (desc) {
+            desc.classList.remove('text-on-surface-variant');
+            desc.classList.add('text-on-primary/80');
+          }
+
+          const icon = card.querySelector('.checkmark');
+          if (icon) {
+            icon.classList.remove('hidden');
+            icon.classList.remove('text-on-surface-variant/40');
+            icon.classList.add('text-on-primary');
+          }
+        });
+      });
+    </script>
+    <script src="calcular_kcal.js"></script>
+    <script src="anadir_ingesta.js"></script>
+    <script src="week_days_selector.js"></script>
+    <script src="historial.js"></script>
+    <script src="router.js"></script>
+    <script>
+      function updateGreetingAndDate() {
+        const now = new Date();
+        const hour = now.getHours();
+        let greeting;
+        if (hour >= 5 && hour < 13) {
+          greeting = 'Buenos días';
+        } else if (hour >= 13 && hour < 20) {
+          greeting = 'Buenas tardes';
+        } else {
+          greeting = 'Buenas noches';
+        }
+        document.getElementById('greeting').textContent = greeting;
+        const dateLabel = new Intl.DateTimeFormat('es-ES', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long'
+        }).format(now);
+        document.getElementById('current-date').textContent = dateLabel;
+      }
+      updateGreetingAndDate();
+      const midnightSoon = new Date();
+      midnightSoon.setHours(24, 0, 1, 0);
+      setTimeout(() => {
+        updateGreetingAndDate();
+        setInterval(updateGreetingAndDate, 60000);
+      }, midnightSoon - Date.now());
+    </script>
+  </main>
+  <nav class="absolute bottom-4 left-4 right-4 z-50 pb-safe" data-active-classes="text-primary font-medium">
+    <div class="flex justify-around items-center h-16 px-4 rounded-full backdrop-blur-xl transition-all duration-300"
+      style="background: rgba(255, 255, 255, 0.65); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.02);">
+      <a
+        class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] text-on-surface-variant transition-colors hover:text-on-surface"
+        data-path="objetivo" href="#objetivo"><span class="material-symbols-outlined text-[22px]">track_changes</span><span
+          class="font-label-caps text-label-caps uppercase">Objetivo</span></a><a
+        class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] text-on-surface-variant transition-colors hover:text-on-surface"
+        data-path="hoy" href="#hoy"><span class="material-symbols-outlined text-[22px]">local_fire_department</span><span
+          class="font-label-caps text-label-caps uppercase">Hoy</span></a><a
+        class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] text-on-surface-variant transition-colors hover:text-on-surface"
+        data-path="historial" href="#historial"><span class="material-symbols-outlined text-[22px]">history</span><span
+          class="font-label-caps text-label-caps uppercase">Historial</span></a></div>
+  </nav>
+  </div>
+
+
+</body>
+
+</html>

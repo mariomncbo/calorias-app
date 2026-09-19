@@ -1,0 +1,6 @@
+[build]
+  command = "echo 'No se necesita build: la app es estática.'"
+  publish = "."
+
+[functions]
+  node_bundler = "esbuild"
