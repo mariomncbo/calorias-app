@@ -10,6 +10,7 @@ Aplicación web para el seguimiento de calorías diarias.
 - Visualización del progreso hacia el objetivo calórico diario
 - Historial de días anteriores
 - Configuración de objetivo
+- Todos los datos se guardan en `localStorage` del navegador, sin backend.
 - PWA instalable
 
 ## Tecnologías
