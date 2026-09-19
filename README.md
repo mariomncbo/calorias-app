@@ -1,11 +1,11 @@
 # Calorias App
 
-Aplicación web para el seguimiento de calorías diarias.
+Aplicación web para el seguimiento de calorías diarias (con IA integrada).
 
 [web](https://glowing-moxie-b07325.netlify.app)
 
 ## Funciones
-
+- IA integrada que calcula las kcal de una imagen que le pases
 - Registro de ingesta diaria de alimentos (kcal)
 - Visualización del progreso hacia el objetivo calórico diario
 - Historial de días anteriores
