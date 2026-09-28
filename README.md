@@ -1,8 +1,12 @@
-# Calorias App
+<div align="center">
+  <img src="icono.png" alt="Calorias App" width="120" />
+  <h1>Calorias App</h1>
+</div>
+<div align="center">
+  <p>Aplicación web para el seguimiento de calorías diarias (con IA integrada).</p>
+  <a href="https://glowing-moxie-b07325.netlify.app">Web</a>
+</div>
 
-Aplicación web para el seguimiento de calorías diarias (con IA integrada).
-
-[web](https://glowing-moxie-b07325.netlify.app)
 
 ## Funciones
 - IA integrada que calcula las kcal de una imagen que le pases
