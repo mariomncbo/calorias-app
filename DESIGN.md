@@ -1,215 +1,171 @@
 ---
-name: Nordic Calorie & Macro Sanctuary
+name: Balanza — etiqueta y libro mayor
 colors:
-  surface: '#f9f9f7'
-  surface-dim: '#dadad8'
-  surface-bright: '#f9f9f7'
-  surface-container-lowest: '#ffffff'
-  surface-container-low: '#f4f4f2'
-  surface-container: '#eeeeec'
-  surface-container-high: '#e8e8e6'
-  surface-container-highest: '#e2e3e1'
-  on-surface: '#1a1c1b'
-  on-surface-variant: '#464742'
-  inverse-surface: '#2f3130'
-  inverse-on-surface: '#f1f1ef'
-  outline: '#767871'
-  outline-variant: '#c6c7c0'
-  surface-tint: '#5e5f5b'
-  primary: '#020201'
-  on-primary: '#ffffff'
-  primary-container: '#1c1d1a'
-  on-primary-container: '#858581'
-  inverse-primary: '#c7c6c2'
-  secondary: '#506354'
-  on-secondary: '#ffffff'
-  secondary-container: '#d0e5d2'
-  on-secondary-container: '#546758'
-  tertiary: '#040100'
-  on-tertiary: '#ffffff'
-  tertiary-container: '#291908'
-  on-tertiary-container: '#998068'
-  error: '#ba1a1a'
-  on-error: '#ffffff'
-  error-container: '#ffdad6'
-  on-error-container: '#93000a'
-  primary-fixed: '#e4e2dd'
-  primary-fixed-dim: '#c7c6c2'
-  on-primary-fixed: '#1b1c19'
-  on-primary-fixed-variant: '#464743'
-  secondary-fixed: '#d3e8d5'
-  secondary-fixed-dim: '#b7ccb9'
-  on-secondary-fixed: '#0e1f13'
-  on-secondary-fixed-variant: '#394b3d'
-  tertiary-fixed: '#fcddc1'
-  tertiary-fixed-dim: '#dfc1a6'
-  on-tertiary-fixed: '#281807'
-  on-tertiary-fixed-variant: '#57432e'
-  background: '#f9f9f7'
-  on-background: '#1a1c1b'
-  surface-variant: '#e2e3e1'
+  desk: '#e7e6e0'
+  sheet: '#faf9f5'
+  sheet-2: '#f1f0ea'
+  sheet-3: '#e9e8e1'
+  ink: '#1a1c1b'
+  muted: '#63655e'
+  faint: '#9c9e96'
+  signal: '#4a5d4e'
+  signal-soft: '#e2e9e0'
+  clay: '#9a5b3a'
+  rule: 'rgba(26, 28, 27, 0.13)'
+  rule-soft: 'rgba(26, 28, 27, 0.07)'
 typography:
-  display-hero:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 48px
-    fontWeight: '400'
-    lineHeight: 52px
-    letterSpacing: -0.03em
-  display-hero-mobile:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 38px
-    fontWeight: '400'
-    lineHeight: 42px
-    letterSpacing: -0.025em
-  headline-lg:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 32px
-    fontWeight: '500'
-    lineHeight: 38px
-    letterSpacing: -0.02em
-  headline-lg-mobile:
-    fontFamily: Plus Jakarta Sans
+  hero:
+    fontFamily: Archivo
+    fontSize: clamp(44px, 13.5vw, 56px)
+    fontWeight: '300'
+    letterSpacing: -0.042em
+    lineHeight: '0.92'
+  title:
+    fontFamily: Archivo
     fontSize: 26px
     fontWeight: '500'
-    lineHeight: 32px
-    letterSpacing: -0.015em
-  headline-md:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 22px
-    fontWeight: '500'
-    lineHeight: 28px
-    letterSpacing: -0.01em
-  headline-sm:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 18px
+    letterSpacing: -0.022em
+  section:
+    fontFamily: Archivo
+    fontSize: 15px
     fontWeight: '600'
-    lineHeight: 24px
-    letterSpacing: -0.005em
-  body-lg:
-    fontFamily: Inter
-    fontSize: 16px
+  body:
+    fontFamily: Archivo
+    fontSize: 15px
     fontWeight: '400'
-    lineHeight: 26px
-    letterSpacing: -0.005em
-  body-md:
-    fontFamily: Inter
-    fontSize: 14px
-    fontWeight: '400'
-    lineHeight: 22px
-    letterSpacing: 0em
-  body-sm:
-    fontFamily: Inter
+    lineHeight: '1.55'
+  small:
+    fontFamily: Archivo
+    fontSize: 13px
+  micro:
+    fontFamily: Archivo
     fontSize: 12px
-    fontWeight: '400'
-    lineHeight: 18px
-    letterSpacing: 0.01em
-  label-caps:
-    fontFamily: Inter
-    fontSize: 11px
-    fontWeight: '600'
-    lineHeight: 14px
-    letterSpacing: 0.06em
-  numeral-metric:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 28px
-    fontWeight: '400'
-    lineHeight: 32px
-    letterSpacing: -0.02em
-rounded:
-  sm: 0.25rem
-  DEFAULT: 0.5rem
-  md: 0.75rem
-  lg: 1rem
-  xl: 1.5rem
-  full: 9999px
 spacing:
-  gutter: 1rem
-  gutter-sm: 0.5rem
-  margin: 1.5rem
-  margin-tablet: 2rem
-  space-xs: 0.25rem
-  space-sm: 0.5rem
-  space-md: 1rem
-  space-lg: 1.5rem
-  space-xl: 2.5rem
+  base: 4px
+  pad: 22px
+  row-v: 13px
+  section-gap: 20px
+radius:
+  control: 10px
+  sheet: 20px
+  pill: 9999px
 ---
 
-## Brand & Style
+## Concepto
 
-This design system expresses a disciplined Scandinavian architectural sensibility tailored for conscious nutritional tracking. Rather than treating nutrition as an obsessive, high-stress chore, the UI creates an atmosphere of serene intentionality, absolute clarity, and quiet luxury.
+La app es un **diario de energía**: una etiqueta nutricional y un libro mayor. La
+interfaz toma la gramática de la etiqueta (filetes finos, cifras tabulares alineadas
+a la derecha, totales) en lugar del kit genérico de tarjetas. La calma no viene de
+adornos, viene de la disciplina: un solo gesto memorable y todo lo demás en silencio.
 
-### Aesthetic Core
-- **Scandinavian Minimalism:** Uncompromising dedication to reductive visual architecture. Every line, pixel, and typographic mark carries purpose. Clutter, decorative excess, and visual noise are eradicated.
-- **Atmosphere & Tone:** Calm, composed, discerning, and effortless. Interfaces feel like a natural light-filled studio in Stockholm or Copenhagen—quiet stone, bleached oak, and crisp linen.
-- **Emotional Intent:** Dismantle tracking anxiety. Replace red warning badges and aggressive gamification streaks with quiet reflection, balanced telemetry, and tactile poise.
+## Principios
 
-## Colors
+1. **Un solo gesto.** El balance del día es lo único que grita. Nada compite con él.
+2. **Filetes, no sombras.** La profundidad la da el contraste lienzo/hoja, no el `box-shadow`.
+3. **Sin etiquetas en mayúsculas.** Se acabaron los `LABEL-CAPS` repartidos por todas las tarjetas.
+4. **El color es información.** El verde solo marca progreso; el arcilla solo marca exceso.
+5. **Cifras tabulares siempre.** `font-variant-numeric: tabular-nums` en toda la app.
+6. **Copys de interfaz.** Verbos llanos, frases cortas, sin disculpas ni adornos.
 
-The color palette embraces Nordic mineral tones, combining carbon ink, warm whitewashed limestone, and an organic pine/sage accent.
+## Color
 
-- **Primary (`#1C1D1A` - Deep Carbon):** An ultra-dense, warm mineral black used for primary typography, authoritative numbers, and solid tactile primary buttons.
-- **Secondary (`#4A5D4E` - Silent Pine / Faded Sage):** A restrained botanical green serving as the sole nutritional progress accent, active macro distribution indicator, and quiet positive confirmation.
-- **Tertiary (`#C2A68C` - Nordic Sand / Warm Stone):** A subtle, warm mineral beige used for baseline micro-accents, caloric target indicators, and background macro proportion segments.
-- **Neutral (`#F9F9F7` - Bleached Chalk):** The expansive canvas ground. Off-white with an imperceptible warm tint that prevents ocular fatigue and preserves tactile softness.
+| Token | Valor | Uso |
+| --- | --- | --- |
+| `--desk` | `#e7e6e0` | Mesa: solo detrás de la hoja, en escritorio |
+| `--sheet` | `#faf9f5` | La hoja: fondo de toda la app |
+| `--sheet-2` | `#f1f0ea` | Superficies hundidas: inputs, riel del segmentado |
+| `--ink` | `#1a1c1b` | Texto principal, botón primario, indicador activo |
+| `--muted` | `#63655e` | Texto secundario, etiquetas, unidades (5,7:1) |
+| `--faint` | `#9c9e96` | Solo decorativo (puntos, encabezados de día, aria-hidden) |
+| `--signal` | `#4a5d4e` | Progreso, confirmación, marca de opción activa |
+| `--clay` | `#9a5b3a` | Exceso sobre la meta, borrado. Nunca rojo de alarma |
+| `--rule` | `ink` 13 % | Filetes estructurales |
+| `--rule-soft` | `ink` 7 % | Rieles, divisiones internas |
 
-### Functional Roles & Nuance
-- **Surface Elevation:** Background runs on `#F9F9F7`, card containers utilize `#FFFFFF`, and subtle recessed states rest on `#F2F2EE`.
-- **Delicate Outlines:** Structural dividers and borders utilize a calibrated `rgba(28, 29, 26, 0.06)` to create ethereal separation without visual weight.
-- **Text Hierarchies:** Primary labels rely on `#1C1D1A`, secondary data relies on a soft graphite `#6B6D66`, and placeholder metrics rest in `#A2A49D`.
+No existe modo oscuro. No se introducen colores fuera de esta tabla.
 
-## Typography
+## Tipografía
 
-The typographical cadence balances the organic geometric grace of **Plus Jakarta Sans** for headlines and calorie counters with the pristine utilitarian legibility of **Inter** for descriptions and telemetry.
+Una sola familia: **Archivo** (300/400/500/600). Sin segunda fuente, sin serif decorativa.
 
-### Rules of Engagement
-- **Tabular Numerals:** All calorie counts, gram weights, and nutritional metrics must employ tabular lining numbers (`font-variant-numeric: tabular-nums`) to ensure vertical alignment throughout logs.
-- **Editorial Contrast:** Numeric totals are prioritized in light weights (`400`) at dramatic scales rather than heavy, blunt bold weights, allowing white space around the digits to create emphasis.
-- **Label Hierarchy:** Category labels, macro identifiers (Protein, Carbs, Fat), and timestamp metadata use `label-caps` in uppercase styling with deliberate tracking (+0.06em) and subdued contrast.
+- **Hero** — 300, `clamp(44px,13.5vw,56px)`, tracking `-0.042em`. El número es el diseño.
+- **Título de vista** — 26 / 500 / `-0.022em`.
+- **Encabezado de sección** — 15 / 600.
+- **Cuerpo** — 15 / 400 / 1.55.
+- **Micro** — 12 / 400, `--muted`. Nunca en mayúsculas, nunca con tracking amplio.
 
-## Layout & Spacing
+## Layout
 
-A mobile-centric fluid grid anchored by ample architectural margins. The composition deliberately favors vertical breathing room over density, elevating daily food intake into an intentional journal rather than an overwhelming spreadsheet.
+- Hoja única de 440 px como máximo; en escritorio centrada sobre `--desk`, con borde
+  de 1 px y radio 8. En móvil ocupa el viewport completo (`100dvh`).
+- Márgenes laterales 22 px. Las secciones se separan con **filetes**, no con cajas.
+- Numeración y datos siempre alineados a la derecha; nombres y etiquetas a la izquierda.
+- Radios: 0 en filas y filetes, 10 px en controles, 20 px en hojas, círculo en steppers.
 
-### Rhythm & Alignment
-- **Margins & Safe Zones:** Mobile displays maintain a strict horizontal gutter and outer margin of `1.5rem` (24px). No content touches the outer screen boundary.
-- **Vertical Air:** Major functional blocks (Macro rings/bars, meal cards, timeline feeds) are separated by `space-xl` (40px) of negative space.
-- **Grid Structure:** Single-column stacked layouts on standard mobile viewpoints; adapts to a dual-column symmetrical card split on tablet/landscape views with `1rem` column gutters.
+## Componentes
 
-## Elevation & Depth
+### Balance (hero)
+Dos cifras enfrentadas sobre la misma línea base: consumido a la izquierda (21 px,
+`--muted`), restante a la derecha (hero, `--ink`). Debajo, una regla de 2 px que **es**
+el medidor de progreso, con la meta impresa encima en una pastilla del color de la hoja.
+Si se supera la meta, el relleno y la cifra pasan a `--clay` y la leyenda dice
+«por encima» con la diferencia.
 
-True to minimalist Scandinavian architecture, physical depth is articulated through surface layering, delicate borders, and low-opacity ambient glazes rather than synthetic drop shadows.
+### Franja semanal
+Siete columnas con filetes verticales: letra del día, número y punto de estado
+(relleno = meta alcanzada, contorno arcilla = sin alcanzar, contorno tenue = pendiente).
+El día de hoy se marca con peso 600 y un subrayado de 2 px. No es interactiva: es un
+resumen, y se anuncia como lista con `aria-label` por día.
 
-### Surface Strategy
-- **Layering:** Level 0 (App Canvas) sits on `#F9F9F7`. Level 1 (Nutrition Cards, Floating Bar) rests on `#FFFFFF`. Level 2 (Nested food entries, input rows) resides on `#F5F5F1`.
-- **Ethereal Line Work:** Outlines replace drop shadows. Cards feature a razor-sharp `1px solid rgba(28, 29, 26, 0.05)`. Under dark backgrounds or pressed states, borders transition to `rgba(28, 29, 26, 0.1)`.
-- **Tactile Hover/Active State:** Interactive surface components utilize a micro-press scale (`scale(0.99)`) accompanied by an imperceptible ambient bleed: `0 4px 20px -2px rgba(28, 29, 26, 0.03)`.
+### Libro mayor
+Filas de 13 px de padding vertical separadas por filetes. La primera fila del diario es
+siempre **Anotar comida**. Las ingestas muestran nombre a la izquierda y kcal a la
+derecha; al abrirse, la descripción aparece con `grid-template-rows: 0fr → 1fr` y se
+revela un botón «Eliminar ingesta» para teclado.
 
-## Shapes
+### Formularios
+Lista de ajustes: etiqueta a la izquierda, control a la derecha, filete entre filas.
+Sin tarjetas de 2×2. Steppers de 38 px con input de `4ch`; segmentados de 2 opciones;
+listas de opción con marca de verificación en `--signal`. Validación en línea con
+`role="status"` y el campo enfocado.
 
-The geometric framework applies clean, natural curvature that softens structured metric grids without devolving into childish or bubbly forms.
+### Hojas modales
+Bottom sheet con asa, esquinas de 20 px y arrastre desde la cabecera con traspaso de
+velocidad. Se cierra con Escape, con el scrim o con un gesto de más de 96 px (o 0,55 px/ms).
+El foco entra en el diálogo y vuelve al disparador al cerrar.
 
-- **Primary Geometry:** Cards, log drawers, and module containers adhere to `rounded-lg` (16px / 1rem).
-- **Interactive Controls:** Search bars, primary log triggers, and pill filters maintain soft continuous bounds at `rounded-xl` (24px / 1.5rem).
-- **Macro Visualizers:** Segmented nutritional bars feature capped micro-radii (4px) to preserve precise data perception while maintaining harmonious softness.
+### Pestañas
+Tres textos, sin iconos. Un tick de 18 × 2 px en `--ink` se desliza bajo la pestaña activa.
 
-## Components
+## Movimiento
 
-### Buttons
-- **Primary:** Solid `#1C1D1A` fill, `#FFFFFF` crisp text, 48px height, `rounded-xl`. High-contrast, completely flat without bevels or drop shadows.
-- **Secondary / Ghost:** Transparent background with `1px solid rgba(28, 29, 26, 0.12)`, `#1C1D1A` text.
-- **Quick-Add FAB:** An unobtrusive 52px floating circle in deep carbon `#1C1D1A` with a delicate sage or warm sand hover state.
+- Un único momento orquestado: la regla del balance se dibuja al cargar (`scaleX` 0 → 1, 700 ms).
+- Cambios de progreso: `width` 450 ms. Apertura de hoja: 320 ms. Tick de pestañas: 260 ms.
+- Todo el movimiento sensible al gesto es interrumpible: el arrastre lee la posición
+  actual y la nueva animación parte de ahí.
+- `prefers-reduced-motion`: sin dibujo, sin escaneo, sin shimmer, transiciones a 0.
+- `prefers-reduced-transparency`: pestañas y scrim opacos.
+- `prefers-contrast: more`: filetes y textos secundarios reforzados.
 
-### Calorie & Macro Visualizers
-- **Macro Distribution Bar:** A whisper-thin (6px) horizontal partitioned strip. Unfilled baseline sits at `#EBECE8`; Protein is rendered in `#4A5D4E` (Silent Pine), Carbs in `#C2A68C` (Warm Stone), and Healthy Fats in a muted slate `#7C8077`.
-- **Daily Target Ring:** Minimalist circular meter with 4px stroke width, floating freely without harsh track shadows.
+## Accesibilidad
 
-### Cards & Meal Clusters
-- **Meal Logs (Breakfast, Lunch, Dinner):** Pristine `#FFFFFF` surfaces bounded by a hairline `1px solid rgba(28, 29, 26, 0.05)`. Content padding is generous (`space-lg` / 24px).
-- **List Items:** Individual food items within a meal card rely on 1px border dividers (`rgba(28, 29, 26, 0.03)`). Calories sit in `numeral-metric` at 18px, aligned right.
+- Objetivos táctiles ≥ 38 px (steppers) y 44-48 px (filas y botones).
+- Anillo de foco `2px` en `--ink` con 2 px de separación; inputs con anillo único.
+- Diálogos con `role="dialog"`, `aria-modal`, trampa de foco, Escape y restauración.
+- `role="progressbar"` con `aria-valuetext` («630 de 2220 kcal consumidas»).
+- Región `aria-live` para «Ingesta guardada / eliminada».
+- Nunca `user-scalable=no`.
 
-### Input Fields & Search
-- **Search Bar:** Minimal `#FFFFFF` or `#F2F2EE` fill, no harsh borders, subtle placeholder text in `#A2A49D`.
-- **Numeric Macro Adjuster:** Clean inline counter fields with zero chrome; digits expand responsively with immediate inline micro-labels ("g", "kcal").
+## Voz
 
-### Chips & Filter Pills
-- Unselected chips use `#FFFFFF` with a 1px border (`rgba(28, 29, 26, 0.07)`). Active chips transition quietly to `#1C1D1A` with `#F9F9F7` text.
+«Anotar comida», «Aún no hay nada anotado hoy.», «No se pudo leer la foto. Puedes
+anotarlo a mano.», «240 de margen». Se describe lo que pasa; no se felicita ni se
+regaña al usuario.
+
+## Antipatrones (lo que se eliminó del diseño anterior)
+
+- Tarjetas blancas idénticas con la misma sombra y el mismo radio para todo.
+- Etiquetas `LABEL-CAPS` en cada bloque.
+- Número grande + etiqueta pequeña + barra dentro de una tarjeta.
+- Iconos Material Symbols y dos tipografías de relleno.
+- Chips de estado «Completado / No completado» en rojo y gris.

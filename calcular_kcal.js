@@ -21,8 +21,8 @@
 	}
 
 	function readGoalForm() {
-		const selectedActivity = document.querySelector('.activity-card[data-selected="true"]');
-		const selectedSex = document.querySelector('.sex-pill.bg-primary');
+		const selectedActivity = document.querySelector('.activity-card[aria-checked="true"]');
+		const selectedSex = document.querySelector('.sex-pill[aria-checked="true"]');
 		const selectedDuration = document.querySelector('.duration-pill[aria-checked="true"]');
 
 		return {
@@ -82,19 +82,47 @@
 
 		if (remainingCount) remainingCount.textContent = formattedCalories;
 		if (dailyGoal) dailyGoal.textContent = formattedCalories;
-		if (dailyGoalLabel) dailyGoalLabel.textContent = `Meta: ${formattedCalories} kcal`;
+		if (dailyGoalLabel) dailyGoalLabel.textContent = `meta ${formattedCalories} kcal`;
 	}
+
+	const FIELD_LABELS = {
+		'current-weight': 'Peso',
+		'height': 'Altura',
+		'age': 'Edad',
+		'target-weight': 'Peso objetivo',
+		'goal-duration': 'Plazo'
+	};
 
 	const goalForm = document.getElementById('goal-form');
 	if (goalForm) {
 		applySavedGoal(loadGoal());
 		goalForm.addEventListener('submit', (event) => {
 			event.preventDefault();
-			const goal = readGoalForm();
-			if (Object.values(goal).some(value => typeof value === 'number' && (!Number.isFinite(value) || value <= 0))) return;
 
+			const status = document.getElementById('goal-status');
+			const invalidField = Object.keys(FIELD_LABELS).find((id) => {
+				const value = Number(document.getElementById(id)?.value);
+				return !Number.isFinite(value) || value <= 0;
+			});
+
+			if (invalidField) {
+				if (status) {
+					status.textContent = `${FIELD_LABELS[invalidField]}: introduce un valor mayor que cero.`;
+					status.classList.remove('is-ok');
+				}
+				document.getElementById(invalidField)?.focus();
+				return;
+			}
+
+			const goal = readGoalForm();
 			const dailyCalories = saveGoal(goal);
 			updateToday({ ...goal, dailyCalories });
+
+			if (status) {
+				status.textContent = 'Objetivo actualizado.';
+				status.classList.add('is-ok');
+			}
+
 			window.dispatchEvent(new CustomEvent('caloriasApp:goalUpdated'));
 			location.hash = 'hoy';
 		});

@@ -1,8 +1,12 @@
+/* Registro de ingestas: filas del diario, hojas de alta y análisis con IA. */
 (() => {
   const STORAGE_KEY = 'caloriasApp.intakes';
   const addEntryButton = document.getElementById('add-entry-trigger');
+  const { openSheet } = window.AppUI;
 
   if (!addEntryButton) return;
+
+  const SVG_TRASH = '<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5h13M8 3.5h4M5 5.5l.7 9.4a1.4 1.4 0 0 0 1.4 1.3h5.8a1.4 1.4 0 0 0 1.4-1.3l.7-9.4"/><path d="M8.2 8.6v4.8M11.8 8.6v4.8"/></svg>';
 
   function getEntries() {
     try {
@@ -25,128 +29,145 @@
     const calories = Number(kcal);
     if (!trimmedName || !Number.isFinite(calories) || calories <= 0) return false;
 
-    const entry = {
+    const entries = saveEntry({
       id: Date.now(),
       name: trimmedName,
       kcal: calories,
       description: String(description || '').trim(),
       createdAt: new Date().toISOString()
-    };
-    const entries = saveEntry(entry);
+    });
+
     updateToday(entries);
     window.dispatchEvent(new CustomEvent('caloriasApp:intakesUpdated'));
     return true;
   }
 
+  function announce(text) {
+    const live = document.getElementById('log-status');
+    if (!live) return;
+    live.textContent = '';
+    requestAnimationFrame(() => {
+      live.textContent = text;
+    });
+  }
+
+  /* ---------------------------------------------------------------------
+     Filas del diario
+     --------------------------------------------------------------------- */
+  function removeEntry(id, label) {
+    const entries = getEntries().filter(entry => entry.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    updateToday(entries);
+    window.dispatchEvent(new CustomEvent('caloriasApp:intakesUpdated'));
+    announce(`${label} eliminada.`);
+  }
+
   function createEntryCard(entry) {
     const wrapper = document.createElement('div');
-    wrapper.className = 'relative overflow-hidden rounded-xl bg-surface-container-lowest';
+    wrapper.className = 'entry-wrap';
 
     const deleteButton = document.createElement('button');
-    deleteButton.className = 'absolute inset-y-0 right-0 z-0 flex w-16 items-center justify-center rounded-r-[16px] bg-error text-on-error';
+    deleteButton.className = 'entry__delete';
     deleteButton.type = 'button';
     deleteButton.setAttribute('aria-label', `Eliminar ${entry.name}`);
-    deleteButton.innerHTML = '<span class="material-symbols-outlined text-[22px]">delete</span>';
-    deleteButton.addEventListener('click', (event) => {
-      event.stopPropagation();
-      const entries = getEntries().filter(savedEntry => savedEntry.id !== entry.id);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-      updateToday(entries);
-      window.dispatchEvent(new CustomEvent('caloriasApp:intakesUpdated'));
-    });
+    deleteButton.setAttribute('aria-hidden', 'true');
+    deleteButton.tabIndex = -1;
+    deleteButton.innerHTML = SVG_TRASH;
+    deleteButton.addEventListener('click', () => removeEntry(entry.id, entry.name));
 
     const card = document.createElement('article');
-    card.className = 'relative z-10 w-full touch-pan-y bg-surface-container-lowest rounded-xl px-4 py-4 shadow-sm cursor-pointer transition-transform transition-colors hover:bg-surface-container-low';
-    card.tabIndex = 0;
-    card.setAttribute('role', 'button');
+    card.className = 'entry';
     card.setAttribute('aria-expanded', 'false');
 
-    const summary = document.createElement('div');
-    summary.className = 'flex items-center justify-between gap-4';
+    const summary = document.createElement('button');
+    summary.className = 'entry__summary';
+    summary.type = 'button';
 
     const name = document.createElement('span');
-    name.className = 'font-body-md text-body-md text-on-surface font-medium';
+    name.className = 'entry__name';
     name.textContent = entry.name;
 
     const kcal = document.createElement('span');
-    kcal.className = 'font-headline-sm text-headline-sm text-on-surface whitespace-nowrap';
-    kcal.textContent = `${entry.kcal.toLocaleString('es-ES')} kcal`;
+    kcal.className = 'entry__kcal';
+    const value = document.createElement('b');
+    value.textContent = Number(entry.kcal).toLocaleString('es-ES');
+    const unit = document.createElement('span');
+    unit.textContent = 'kcal';
+    kcal.append(value, unit);
+
     summary.append(name, kcal);
 
     const details = document.createElement('div');
-    details.className = 'hidden flex-col gap-2 mt-3 pt-3 border-t border-on-surface/10';
+    details.className = 'entry__details';
+    const inner = document.createElement('div');
 
     const description = document.createElement('p');
-    description.className = 'font-body-sm text-body-sm text-on-surface-variant leading-relaxed';
-    description.textContent = `Descripción: ${entry.description || 'Sin descripción'}`;
-    details.append(description);
+    description.className = 'entry__desc';
+    description.textContent = entry.description || 'Sin descripción.';
 
-    const toggleDetails = () => {
-      const expanded = card.getAttribute('aria-expanded') === 'true';
-      card.setAttribute('aria-expanded', String(!expanded));
-      details.classList.toggle('hidden', expanded);
-      details.classList.toggle('flex', !expanded);
-    };
+    const remove = document.createElement('button');
+    remove.className = 'entry__remove';
+    remove.type = 'button';
+    remove.textContent = 'Eliminar ingesta';
+    remove.addEventListener('click', () => removeEntry(entry.id, entry.name));
 
-    const DELETE_OFFSET = 64;
+    inner.append(description, remove);
+    details.append(inner);
+
+    const DELETE_WIDTH = 74;
     let startX = 0;
     let startY = 0;
-    let startOffset = 0;
-    let currentOffset = 0;
+    let baseOffset = 0;
+    let offset = 0;
     let dragging = false;
     let ignoreClickUntil = 0;
 
-    card.addEventListener('pointerdown', (event) => {
+    summary.addEventListener('click', () => {
+      if (Date.now() < ignoreClickUntil) return;
+      if (offset !== 0) {
+        offset = 0;
+        card.style.transform = 'translateX(0px)';
+        return;
+      }
+      const expanded = card.getAttribute('aria-expanded') === 'true';
+      card.setAttribute('aria-expanded', String(!expanded));
+    });
+
+    card.addEventListener('pointerdown', event => {
+      if (event.target.closest('.entry__remove')) return;
       startX = event.clientX;
       startY = event.clientY;
-      startOffset = currentOffset;
+      baseOffset = offset;
       dragging = false;
       card.setPointerCapture(event.pointerId);
     });
 
-    card.addEventListener('pointermove', (event) => {
+    card.addEventListener('pointermove', event => {
       if (!card.hasPointerCapture(event.pointerId)) return;
       const deltaX = event.clientX - startX;
       const deltaY = event.clientY - startY;
+
       if (!dragging) {
-        if (Math.abs(deltaX) < 6 && Math.abs(deltaY) < 6) return;
+        if (Math.abs(deltaX) < 8 || Math.abs(deltaX) < Math.abs(deltaY)) return;
         dragging = true;
         card.style.transition = 'none';
-        document.body.style.userSelect = 'none';
-        document.body.style.webkitUserSelect = 'none';
       }
-      const offset = Math.max(-DELETE_OFFSET, Math.min(0, startOffset + deltaX));
-      currentOffset = offset;
+
+      offset = Math.max(-DELETE_WIDTH, Math.min(0, baseOffset + deltaX));
       card.style.transform = `translateX(${offset}px)`;
     }, { passive: true });
 
-    const endDrag = (event) => {
+    function endDrag() {
       if (!dragging) return;
       dragging = false;
-      document.body.style.userSelect = '';
-      document.body.style.webkitUserSelect = '';
       card.style.transition = '';
-      const open = currentOffset <= -45;
-      currentOffset = open ? -DELETE_OFFSET : 0;
-      card.style.transform = `translateX(${currentOffset}px)`;
-      if (event.type !== 'pointercancel') ignoreClickUntil = Date.now() + 300;
-    };
+      offset = offset <= -DELETE_WIDTH / 2 ? -DELETE_WIDTH : 0;
+      card.style.transform = `translateX(${offset}px)`;
+      ignoreClickUntil = Date.now() + 260;
+    }
 
     card.addEventListener('pointerup', endDrag);
     card.addEventListener('pointercancel', endDrag);
-    card.addEventListener('click', (event) => {
-      if (Date.now() < ignoreClickUntil) {
-        event.preventDefault();
-        return;
-      }
-      toggleDetails();
-    });
-    card.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        toggleDetails();
-      }
-    });
 
     card.append(summary, details);
     wrapper.append(deleteButton, card);
@@ -155,13 +176,16 @@
 
   function renderEntries(entries) {
     const list = document.querySelector('[data-entries-list]');
-    const emptyState = document.querySelector('[data-empty-state]');
-    if (!list || !emptyState) return;
+    const empty = document.querySelector('[data-view="hoy"] [data-empty-state]');
+    if (!list) return;
 
     list.replaceChildren(...entries.map(createEntryCard));
-    emptyState.classList.toggle('hidden', entries.length > 0);
+    if (empty) empty.classList.toggle('hidden', entries.length > 0);
   }
 
+  /* ---------------------------------------------------------------------
+     Balance del día
+     --------------------------------------------------------------------- */
   function toDateString(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -176,86 +200,126 @@
 
   function updateToday(entries) {
     const todayEntries = getTodayEntries(entries);
-    const consumed = todayEntries.reduce((total, entry) => total + entry.kcal, 0);
-    const consumedLabel = document.querySelector('[data-consumed-kcal]');
-    const consumedTile = document.querySelector('[data-consumed-tile]');
-    const remainingCount = document.getElementById('remaining-count');
-    const dailyGoal = Number.parseInt(document.getElementById('daily-goal')?.textContent.replace(/\D/g, ''), 10);
-    const progressMeter = document.getElementById('progress-meter');
-    const recordCount = document.querySelector('[data-record-count]');
-    const remaining = Number.isFinite(dailyGoal) ? Math.max(0, dailyGoal - consumed) : null;
+    const consumed = todayEntries.reduce((total, entry) => total + (Number(entry.kcal) || 0), 0);
 
-    if (consumedLabel) consumedLabel.textContent = `${consumed.toLocaleString('es-ES')} kcal consumidas`;
-    if (consumedTile) consumedTile.textContent = consumed.toLocaleString('es-ES');
-    if (remainingCount && remaining !== null) remainingCount.textContent = remaining.toLocaleString('es-ES');
-    if (progressMeter && dailyGoal > 0) progressMeter.style.width = `${Math.min(100, (consumed / dailyGoal) * 100)}%`;
-    if (recordCount) recordCount.textContent = `${todayEntries.length} ${todayEntries.length === 1 ? 'registro' : 'registros'}`;
+    const goalNode = document.getElementById('daily-goal');
+    const goal = Number.parseInt((goalNode?.textContent || '').replace(/\D/g, ''), 10) || 2220;
+    const remaining = goal - consumed;
+    const isOver = remaining < 0;
+
+    document.querySelectorAll('[data-consumed-tile]').forEach(node => {
+      node.textContent = consumed.toLocaleString('es-ES');
+    });
+
+    const remainingNode = document.getElementById('remaining-count');
+    if (remainingNode) remainingNode.textContent = Math.abs(remaining).toLocaleString('es-ES');
+
+    const remainingLabel = document.getElementById('remaining-label');
+    if (remainingLabel) remainingLabel.textContent = isOver ? 'por encima' : 'restantes';
+
+    document.querySelector('.balance')?.classList.toggle('is-over', isOver);
+
+    const meter = document.getElementById('progress-meter');
+    if (meter) meter.style.setProperty('--fill', `${Math.min(100, (consumed / goal) * 100)}%`);
+
+    const goalLabel = document.getElementById('daily-goal-label');
+    if (goalLabel) goalLabel.textContent = `meta ${goal.toLocaleString('es-ES')} kcal`;
+
+    const track = document.getElementById('progress-track');
+    if (track) {
+      track.setAttribute('aria-valuemax', String(goal));
+      track.setAttribute('aria-valuenow', String(Math.min(consumed, goal)));
+      track.setAttribute('aria-valuetext', `${consumed} de ${goal} kcal consumidas`);
+    }
+
+    const recordCount = document.querySelector('[data-record-count]');
+    if (recordCount) {
+      recordCount.textContent = `${todayEntries.length} ${todayEntries.length === 1 ? 'registro' : 'registros'}`;
+    }
+
     renderEntries(todayEntries);
   }
 
-  function createButton(label, classes, type = 'button') {
-    const button = document.createElement('button');
-    button.type = type;
-    button.className = classes;
-    button.textContent = label;
-    return button;
-  }
-
-  function closeModal(modal) {
-    modal.remove();
-    document.body.classList.remove('overflow-hidden');
-  }
-
-  function showManualForm(content, modal) {
-    content.innerHTML = '';
-
-    const heading = document.createElement('div');
-    heading.className = 'flex items-start justify-between gap-4 mb-5';
-    heading.innerHTML = '<div><p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-1">Nueva ingesta</p><h2 class="font-headline-md text-headline-md text-on-surface">Añadir manualmente</h2></div>';
-
-    const closeButton = createButton('×', 'w-10 h-10 shrink-0 rounded-full bg-surface-container-low text-on-surface text-2xl leading-none hover:bg-surface-container-high transition-colors', 'button');
-    closeButton.setAttribute('aria-label', 'Cerrar');
-    closeButton.addEventListener('click', () => closeModal(modal));
-    heading.appendChild(closeButton);
-
+  /* ---------------------------------------------------------------------
+     Formularios
+     --------------------------------------------------------------------- */
+  function buildForm({ submitLabel = 'Guardar', values = {}, onSave }) {
     const form = document.createElement('form');
-    form.className = 'flex flex-col gap-4';
+    form.noValidate = true;
+    form.className = 'entry-form';
     form.innerHTML = `
-      <label class="flex flex-col gap-2">
-        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Nombre de la comida</span>
-        <input class="w-full bg-surface-container-low rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface outline-none focus:bg-surface-container" name="name" required type="text" placeholder="Ej. Ensalada de pollo">
-      </label>
-      <label class="flex flex-col gap-2">
-        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Kcal</span>
-        <input class="w-full bg-surface-container-low rounded-xl px-4 py-3 font-numeral-metric text-numeral-metric text-primary outline-none focus:bg-surface-container" min="1" name="kcal" required type="number" placeholder="Ej. 450">
-      </label>
-      <label class="flex flex-col gap-2">
-        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Descripción <span class="normal-case tracking-normal font-normal">(Opcional)</span></span>
-        <textarea class="w-full min-h-24 resize-y bg-surface-container-low rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface outline-none focus:bg-surface-container" name="description" placeholder="Añade algún detalle"></textarea>
-      </label>
+      <div class="field">
+        <label class="label" for="entry-name">Nombre</label>
+        <input class="input" id="entry-name" name="name" placeholder="Ej. Ensalada de pollo" required type="text">
+      </div>
+      <div class="field">
+        <label class="label" for="entry-kcal">Kcal</label>
+        <input class="input" id="entry-kcal" inputmode="numeric" min="1" name="kcal" placeholder="Ej. 450" required type="number">
+      </div>
+      <div class="field">
+        <label class="label" for="entry-desc">Descripción <span class="hint">opcional</span></label>
+        <textarea class="input" id="entry-desc" name="description" placeholder="Añade algún detalle"></textarea>
+      </div>
+      <p class="form-status" role="status"></p>
+      <div class="sheet__actions">
+        <button class="btn btn--ghost" data-cancel type="button">Cancelar</button>
+        <button class="btn btn--primary" type="submit">${submitLabel}</button>
+      </div>
     `;
 
-    const actions = document.createElement('div');
-    actions.className = 'flex gap-3 pt-2';
-    const cancelButton = createButton('Cancelar', 'flex-1 h-12 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md hover:bg-surface-container transition-colors');
-    cancelButton.addEventListener('click', () => closeModal(modal));
-    const saveButton = createButton('Guardar ingesta', 'flex-1 h-12 rounded-xl bg-primary text-on-primary font-body-md text-body-md hover:bg-primary-container transition-colors', 'submit');
-    actions.append(cancelButton, saveButton);
-    form.appendChild(actions);
+    const nameInput = form.querySelector('[name="name"]');
+    const kcalInput = form.querySelector('[name="kcal"]');
+    const descriptionInput = form.querySelector('[name="description"]');
+    const status = form.querySelector('.form-status');
 
-    form.addEventListener('submit', (event) => {
+    nameInput.value = values.name || '';
+    kcalInput.value = values.kcal ? String(values.kcal) : '';
+    descriptionInput.value = values.description || '';
+
+    form.addEventListener('submit', event => {
       event.preventDefault();
-      const formData = new FormData(form);
-      const saved = persistEntry({
-        name: String(formData.get('name')).trim(),
-        kcal: Number(formData.get('kcal')),
-        description: String(formData.get('description')).trim()
-      });
-      if (saved) closeModal(modal);
+      const data = new FormData(form);
+      const name = String(data.get('name') || '').trim();
+      const kcal = Number(data.get('kcal'));
+
+      if (!name) {
+        status.textContent = 'Ponle un nombre a la comida.';
+        nameInput.focus();
+        return;
+      }
+
+      if (!Number.isFinite(kcal) || kcal <= 0) {
+        status.textContent = 'Indica las kcal, un número mayor que cero.';
+        kcalInput.focus();
+        return;
+      }
+
+      status.textContent = '';
+      onSave({ name, kcal: Math.round(kcal), description: String(data.get('description') || '').trim() });
     });
 
-    content.append(heading, form);
-    form.querySelector('input[name="name"]').focus();
+    return form;
+  }
+
+  /* ---------------------------------------------------------------------
+     Hojas de alta
+     --------------------------------------------------------------------- */
+  function openManualSheet() {
+    const body = document.createElement('div');
+    const sheet = openSheet({ title: 'Anotar a mano', body });
+
+    const form = buildForm({
+      submitLabel: 'Guardar',
+      onSave: values => {
+        if (!persistEntry(values)) return;
+        announce('Ingesta guardada.');
+        sheet.close();
+      }
+    });
+
+    form.querySelector('[data-cancel]').addEventListener('click', () => sheet.close());
+    body.append(form);
+    form.querySelector('[name="name"]').focus({ preventScroll: true });
   }
 
   function readFileAsDataUrl(file) {
@@ -300,23 +364,22 @@
     input.capture = 'environment';
     input.style.display = 'none';
     document.body.appendChild(input);
+
     input.addEventListener('change', async () => {
       const file = input.files && input.files[0];
       input.remove();
       if (!file) return;
+
       try {
         const dataUrl = await compressImage(file);
-        showAiModal(dataUrl);
+        openAnalysisSheet(dataUrl);
       } catch {
         const dataUrl = await readFileAsDataUrl(file);
-        showAiModal(dataUrl);
+        openAnalysisSheet(dataUrl);
       }
     });
-    input.click();
-  }
 
-  function openCamera() {
-    triggerCamera();
+    input.click();
   }
 
   function analyzeFood(dataUrl) {
@@ -326,166 +389,110 @@
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mime, base64 })
-    })
-      .then(async response => {
-        const payload = await response.json().catch(() => null);
-        if (!response.ok) {
-          throw new Error(payload?.error || `No se pudo analizar la foto (${response.status})`);
-        }
-        return payload;
-      });
+    }).then(async response => {
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(payload?.error || `No se pudo analizar la foto (${response.status})`);
+      }
+      return payload;
+    });
   }
 
-  function fillAiForm(form, values) {
-    const nameInput = form.querySelector('input[name="name"]');
-    const kcalInput = form.querySelector('input[name="kcal"]');
-    const descriptionInput = form.querySelector('textarea[name="description"]');
-    if (nameInput) nameInput.value = values.name;
-    if (kcalInput) kcalInput.value = values.kcal === '' || values.kcal === null ? '' : values.kcal;
-    if (descriptionInput) descriptionInput.value = values.description;
-    if (nameInput) nameInput.focus();
-  }
+  function openAnalysisSheet(dataUrl) {
+    const sheet = openSheet({ title: 'Comida detectada', body: document.createElement('div') });
+    const { body } = sheet;
 
-  function showAiModal(dataUrl) {
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 z-[60] flex items-end justify-center bg-on-surface/40 p-4 sm:items-center';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-label', 'Registrar ingesta con IA');
-
-    const panel = document.createElement('div');
-    panel.className = 'w-full max-w-md rounded-2xl bg-surface-container-lowest p-6 shadow-xl';
-
-    const heading = document.createElement('div');
-    heading.className = 'flex items-start justify-between gap-4 mb-5';
-    heading.innerHTML = '<div><p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-1">Nueva ingesta</p><h2 class="font-headline-md text-headline-md text-on-surface">Comida detectada</h2></div>';
-
-    const closeButton = createButton('×', 'w-10 h-10 shrink-0 rounded-full bg-surface-container-low text-on-surface text-2xl leading-none hover:bg-surface-container-high transition-colors', 'button');
-    closeButton.setAttribute('aria-label', 'Cerrar');
-    closeButton.addEventListener('click', () => closeModal(modal));
-    heading.appendChild(closeButton);
-
-    const image = document.createElement('img');
+    const photo = document.createElement('div');
+    photo.className = 'photo';
+    const image = new Image();
     image.src = dataUrl;
     image.alt = 'Foto del plato';
-    image.className = 'w-full aspect-square object-cover rounded-xl bg-surface-container shadow-sm';
+    const scan = document.createElement('div');
+    scan.className = 'photo__scan';
+    photo.append(image, scan);
 
-    const status = document.createElement('div');
-    status.className = 'flex items-center gap-2 py-4';
-    status.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span><span class="font-body-md text-body-md text-on-surface-variant">Analizando tu comida…</span>';
+    const analyzing = document.createElement('div');
+    analyzing.className = 'analyzing';
+    analyzing.innerHTML = '<p>Analizando la foto…</p><div class="skel skel--lg"></div><div class="skel skel--sm"></div>';
+    body.append(photo, analyzing);
 
-    const form = document.createElement('form');
-    form.className = 'hidden flex-col gap-4';
-    form.innerHTML = `
-      <label class="flex flex-col gap-2">
-      <br>
-        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Nombre de la comida</span>
-        <input class="w-full bg-surface-container-low rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface outline-none focus:bg-surface-container" name="name" required type="text" placeholder="Ej. Ensalada de pollo">
-      </label>
-      <label class="flex flex-col gap-2">
-        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Kcal</span>
-        <input class="w-full bg-surface-container-low rounded-xl px-4 py-3 font-numeral-metric text-numeral-metric text-primary outline-none focus:bg-surface-container" min="1" name="kcal" required type="number" placeholder="Ej. 450">
-      </label>
-      <label class="flex flex-col gap-2">
-        <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Descripción <span class="normal-case tracking-normal font-normal">(Opcional)</span></span>
-        <textarea class="w-full min-h-24 resize-y bg-surface-container-low rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface outline-none focus:bg-surface-container" name="description" placeholder="Añade algún detalle"></textarea>
-      </label>
-    `;
-
-    const actions = document.createElement('div');
-    actions.className = 'flex gap-3 pt-2';
-    const cancelButton = createButton('Cancelar', 'flex-1 h-12 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md hover:bg-surface-container transition-colors');
-    cancelButton.addEventListener('click', () => closeModal(modal));
-    const saveButton = createButton('Guardar ingesta', 'flex-1 h-12 rounded-xl bg-primary text-on-primary font-body-md text-body-md hover:bg-primary-container transition-colors', 'submit');
-    actions.append(cancelButton, saveButton);
-    form.appendChild(actions);
-
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const formData = new FormData(form);
-      const saved = persistEntry({
-        name: String(formData.get('name')).trim(),
-        kcal: Number(formData.get('kcal')),
-        description: String(formData.get('description')).trim()
+    function mountForm(values, note) {
+      scan.remove();
+      const form = buildForm({
+        submitLabel: 'Guardar ingesta',
+        values,
+        onSave: entry => {
+          if (!persistEntry(entry)) return;
+          announce('Ingesta guardada.');
+          sheet.close();
+        }
       });
-      if (saved) {
-        closeModal(modal);
-      }
-    });
+      form.querySelector('[data-cancel]').addEventListener('click', () => sheet.close());
 
-    panel.append(heading, image, status, form);
-    modal.appendChild(panel);
-    modal.addEventListener('click', (event) => {
-      if (event.target === modal) closeModal(modal);
-    });
-    document.body.appendChild(modal);
-    document.body.classList.add('overflow-hidden');
+      const parts = [photo];
+      if (note === 'error') {
+        const warning = document.createElement('p');
+        warning.className = 'form-status';
+        warning.style.paddingTop = '14px';
+        warning.textContent = 'No se pudo leer la foto. Puedes anotarlo a mano.';
+        parts.push(warning);
+      }
+      parts.push(form);
+
+      body.replaceChildren(...parts);
+      form.querySelector('[name="name"]').focus({ preventScroll: true });
+    }
 
     analyzeFood(dataUrl)
       .then(details => {
         const calories = Number(details.kcal);
-        fillAiForm(form, {
+        mountForm({
           name: String(details.name || '').trim(),
           kcal: Number.isFinite(calories) && calories > 0 ? Math.round(calories) : '',
           description: String(details.description || '').trim()
         });
-        status.classList.add('hidden');
-        form.classList.toggle('hidden', false);
-        form.classList.toggle('flex', true);
       })
-      .catch(error => {
-        const message = document.createElement('span');
-        message.className = 'font-body-md text-body-md text-error';
-        message.textContent = error.message || 'No se pudo analizar la foto. Complétalo a mano.';
-        status.replaceChildren(message);
-        form.classList.toggle('hidden', false);
-        form.classList.toggle('flex', true);
-      });
+      .catch(() => mountForm({}, 'error'));
   }
 
-  function openModal() {
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 z-[60] flex items-end justify-center bg-on-surface/40 p-4 sm:items-center';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-label', 'Añadir ingesta');
+  function openAddSheet() {
+    const body = document.createElement('div');
 
-    const panel = document.createElement('div');
-    panel.className = 'w-full max-w-md rounded-2xl bg-surface-container-lowest p-6 shadow-xl';
-    const content = document.createElement('div');
-    content.innerHTML = `
-      <div class="flex items-start justify-between gap-4 mb-6">
-        <div><p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-1">Diario de hoy</p><h2 class="font-headline-md text-headline-md text-on-surface">Añadir ingesta</h2></div>
-        <button class="w-10 h-10 shrink-0 rounded-full bg-surface-container-low text-on-surface text-2xl leading-none hover:bg-surface-container-high transition-colors" type="button" aria-label="Cerrar">×</button>
-      </div>
-      <div class="flex flex-col gap-3">
-        <button class="w-full h-12 bg-primary text-on-primary rounded-xl flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-all hover:bg-primary-container group" id="camera-trigger" type="button">
-          <span class="material-symbols-outlined text-[20px] transition-transform group-hover:scale-105">photo_camera</span>
-          <span>Usar cámara (IA)</span>
-        </button>
-        <button class="w-full h-12 rounded-xl bg-primary text-on-primary font-body-md text-body-md flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" type="button">
-          <span class="material-symbols-outlined text-[20px]">edit</span>
-          <span>Añadir manualmente</span>
-        </button>
-      </div>
-    `;
+    const primary = document.createElement('button');
+    primary.className = 'btn btn--primary btn--block';
+    primary.type = 'button';
+    primary.innerHTML = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5h2.2l1.1-1.8h6.4l1.1 1.8h2.2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/><circle cx="10" cy="10.7" r="2.8"/></svg><span>Hacer una foto</span>';
 
-    const closeButton = content.querySelector('button[aria-label="Cerrar"]');
-    closeButton.addEventListener('click', () => closeModal(modal));
-    content.querySelector('#camera-trigger').addEventListener('click', () => {
-      closeModal(modal);
-      openCamera();
+    const secondary = document.createElement('button');
+    secondary.className = 'btn btn--ghost btn--block';
+    secondary.type = 'button';
+    secondary.innerHTML = '<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 3.3a1.6 1.6 0 0 1 2.3 2.3L6.3 15H3.5v-2.8l9.7-8.9Z"/></svg><span>Escribir a mano</span>';
+
+    const hint = document.createElement('p');
+    hint.className = 'hint';
+    hint.style.paddingTop = '14px';
+    hint.textContent = 'Con una foto, la IA estima el nombre y las kcal. Siempre puedes corregirlos antes de guardar.';
+
+    const actions = document.createElement('div');
+    actions.className = 'sheet__actions sheet__actions--stack';
+    actions.append(primary, secondary);
+
+    body.append(actions, hint);
+
+    const sheet = openSheet({ title: 'Anotar comida', body });
+    primary.addEventListener('click', () => {
+      sheet.close();
+      triggerCamera();
     });
-    content.querySelectorAll('button')[2].addEventListener('click', () => showManualForm(content, modal));
-    panel.appendChild(content);
-    modal.appendChild(panel);
-    modal.addEventListener('click', (event) => {
-      if (event.target === modal) closeModal(modal);
+    secondary.addEventListener('click', () => {
+      sheet.close();
+      openManualSheet();
     });
-    document.body.appendChild(modal);
-    document.body.classList.add('overflow-hidden');
   }
 
+  /* ---------------------------------------------------------------------
+     Arranque
+     --------------------------------------------------------------------- */
   let lastRenderDate = toDateString(new Date());
 
   function refreshIfDayChanged() {
@@ -496,7 +503,7 @@
     }
   }
 
-  addEntryButton.addEventListener('click', openModal);
+  addEntryButton.addEventListener('click', openAddSheet);
   updateToday(getEntries());
   window.addEventListener('caloriasApp:goalUpdated', () => updateToday(getEntries()));
   document.addEventListener('visibilitychange', refreshIfDayChanged);
