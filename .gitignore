@@ -1,2 +1,9 @@
 # API Key
 .env
+
+# macOS
+.DS_Store
+
+# Skills locales del agente (npx skills)
+.agents/
+skills-lock.json
