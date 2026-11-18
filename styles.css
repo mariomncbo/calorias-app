@@ -620,7 +620,7 @@ body.is-ready .balance__fill {
 .input {
   width: 100%;
   padding: 11px 13px;
-  border: 1px solid transparent;
+  border: 1px solid var(--rule-soft);
   border-radius: var(--radius);
   background: var(--sheet-2);
   font-size: 15px;
@@ -632,8 +632,13 @@ body.is-ready .balance__fill {
   color: var(--muted);
 }
 
+.input:focus-visible {
+  outline: none;
+}
+
 .input:focus {
   background: var(--sheet);
+  border-color: var(--rule-strong);
 }
 
 textarea.input {
@@ -670,7 +675,9 @@ textarea.input {
 }
 
 .stepper__input {
+  flex: none;
   width: 4ch;
+  min-width: 0;
   padding: 0;
   border: 0;
   background: none;
@@ -688,6 +695,10 @@ textarea.input {
   width: 34px;
   font-size: 12.5px;
   color: var(--muted);
+}
+
+.field--inline + .seg {
+  margin-top: 14px;
 }
 
 /* Segmented control */

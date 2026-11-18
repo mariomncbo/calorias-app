@@ -150,7 +150,8 @@ Tres textos, sin iconos. Un tick de 18 × 2 px en `--ink` se desliza bajo la pes
 ## Accesibilidad
 
 - Objetivos táctiles ≥ 38 px (steppers) y 44-48 px (filas y botones).
-- Anillo de foco `2px` en `--ink` con 2 px de separación; inputs con anillo único.
+- Anillo de foco `2px` en `--ink` con 2 px de separación; los campos de texto
+  refuerzan su borde y su relleno en foco, sin duplicar el anillo.
 - Diálogos con `role="dialog"`, `aria-modal`, trampa de foco, Escape y restauración.
 - `role="progressbar"` con `aria-valuetext` («630 de 2220 kcal consumidas»).
 - Región `aria-live` para «Ingesta guardada / eliminada».
